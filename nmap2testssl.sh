@@ -1,4 +1,15 @@
 #!/bin/bash
+# ==============================================================================
+# N2T-parser - Nmap to TestSSL Scanner
+#
+# Automates the parsing of Nmap output files to identify SSL/TLS ports and
+# sequentially triggers testssl.sh scans against them. Separates unencrypted
+# traffic into a distinct log for review.
+#
+# Author:    gpheheise
+# Copyright: (c) 2026 gpheheise
+# License:   MIT (or your preferred license)
+# ==============================================================================
 
 # Configuration
 NMAP_DIR="nmap"
