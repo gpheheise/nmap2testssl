@@ -5,12 +5,11 @@
 ## Features
 
 * **Smart Parsing:** Reads standard Nmap output files (greps `Nmap scan report` and `open` ports).
+* **SNI Aware:** Prioritizes Hostnames/FQDNs over IP addresses when available. This ensures `testssl.sh` checks the correct certificate (SNI) and validates the domain name.
 * **Active Verification:** Uses `openssl` to verify if a port is actually speaking SSL/TLS before scanning, preventing false positives on HTTP/SSH ports.
-* **Two-Stage Process:**
-    1.  **Discovery:** Identifies all SSL targets and filters out unencrypted services.
-    2.  **Scanning:** Runs `testssl.sh` sequentially on the confirmed SSL list.
-* **De-duplication:** Automatically ignores duplicate IP:Port pairs across multiple Nmap files.
-* **Clean Reporting:** Saves individual HTML reports for every service and logs unencrypted ports to a separate file.
+* **Customizable Output:** Allows you to define custom directories for HTML reports and custom filenames for unencrypted logs via command-line flags.
+* **De-duplication:** Automatically ignores duplicate Host:Port pairs across multiple Nmap files.
+* **Clean Reporting:** Saves individual HTML reports for every service (named `hostname_port.html`).
 
 ## Prerequisites
 
@@ -38,7 +37,7 @@ Ensure the following tools are installed and accessible on your system:
     Ensure your directory structure looks like this:
     ```text
     .
-    ├── n2t.sh                  # The main script (rename if needed)
+    ├── nmap2testssl.sh         # The main script
     ├── nmap/                   # Place your Nmap output files here
     │   ├── scan1.txt
     │   └── scan2.txt
@@ -48,31 +47,14 @@ Ensure the following tools are installed and accessible on your system:
 
 4.  **Make executable:**
     ```bash
-    chmod +x n2t.sh
+    chmod +x nmap2testssl.sh
     chmod +x testssl.sh/testssl.sh
     ```
 
 ## Usage
 
-1.  Place your Nmap scan results (standard output format) into the `nmap/` folder.
-2.  Run the script:
+Place your Nmap scan results (standard output format) into the `nmap/` folder and run the script.
 
-    ```bash
-    ./n2t.sh
-    ```
-
-3.  **View Results:**
-    * **Encrypted Reports:** Check the `testssl_results/` folder for HTML reports (e.g., `192.168.1.5_443.html`).
-    * **Unencrypted Log:** Check `unencrypted_hosts_and_ports` for a list of open ports that do not support SSL.
-
-## Workflow
-
-1.  The script iterates through all files in `nmap/`.
-2.  It attempts an SSL handshake on every open TCP port found.
-3.  **If SSL fails:** The port is logged to `unencrypted_hosts_and_ports`.
-4.  **If SSL succeeds:** The target is added to a queue (`ssl_targets_to_scan.txt`).
-5.  Once discovery is complete, `testssl.sh` is executed against the queue, saving HTML reports.
-
-## Copyright
-
-Copyright (c) 2026 gpheheise.
+### Basic Run (Defaults)
+```bash
+./nmap2testssl.sh
