@@ -1,6 +1,6 @@
-# N2T-parser (Nmap to TestSSL Scanner)
+# N2T-parser (Nmap to TestSSL Parser)
 
-**N2S-parser** is a lightweight automation script designed to bridge the gap between discovery and detailed SSL/TLS analysis. It parses existing Nmap scan files, validates SSL availability on open ports, and automatically dispatches `testssl.sh` to generate HTML reports for every encrypted service found.
+**N2T-parser** is a lightweight automation tool designed to bridge the gap between network discovery and detailed SSL/TLS analysis. It parses existing Nmap scan files, validates SSL availability on open ports, and automatically dispatches `testssl.sh` to generate HTML reports for every encrypted service found.
 
 ## Features
 
@@ -14,35 +14,41 @@
 
 ## Prerequisites
 
-Ensure the following tools are installed and accessible:
-* `bash`
-* `openssl`
-* `testssl.sh` (Must be cloned locally)
+Ensure the following tools are installed and accessible on your system:
+
+* **Nmap:** Required to generate the initial scan files.
+* **Bash & OpenSSL:** Standard on most Linux distributions.
+* **TestSSL.sh:** This script must be cloned from GitHub (instructions below).
 
 ## Installation & Directory Structure
 
-1.  **Clone the repository:**
+1.  **Clone this repository:**
     ```bash
-    git clone [https://github.com/gpheheise/n3s.git](https://github.com/gpheheise/n3s.git)
-    cd n3s
+    git clone [https://github.com/gpheheise/nmap2testssl.git](https://github.com/gpheheise/nmap2testssl.git)
+    cd nmap2testssl
     ```
 
-2.  **Organize your folders:**
-    The script expects a specific directory structure to function. Ensure `testssl.sh` is inside the folder as shown below:
+2.  **Install TestSSL.sh:**
+    The script expects `testssl.sh` to be located in the current directory. Clone it from the official source:
+    ```bash
+    git clone [https://github.com/drwetter/testssl.sh.git](https://github.com/drwetter/testssl.sh.git)
+    ```
 
+3.  **Organize your folders:**
+    Ensure your directory structure looks like this:
     ```text
     .
-    ├── n3s.sh                  # The main script
+    ├── n2t.sh                  # The main script (rename if needed)
     ├── nmap/                   # Place your Nmap output files here
     │   ├── scan1.txt
     │   └── scan2.txt
-    └── testssl.sh/             # Clone testssl.sh here
+    └── testssl.sh/             # The cloned testssl repository
         └── testssl.sh
     ```
 
-3.  **Make executable:**
+4.  **Make executable:**
     ```bash
-    chmod +x n3s.sh
+    chmod +x n2t.sh
     chmod +x testssl.sh/testssl.sh
     ```
 
@@ -52,7 +58,7 @@ Ensure the following tools are installed and accessible:
 2.  Run the script:
 
     ```bash
-    ./n3s.sh
+    ./n2t.sh
     ```
 
 3.  **View Results:**
@@ -62,7 +68,7 @@ Ensure the following tools are installed and accessible:
 ## Workflow
 
 1.  The script iterates through all files in `nmap/`.
-2.  It attempts an SSL handshake on every open TCP port.
+2.  It attempts an SSL handshake on every open TCP port found.
 3.  **If SSL fails:** The port is logged to `unencrypted_hosts_and_ports`.
 4.  **If SSL succeeds:** The target is added to a queue (`ssl_targets_to_scan.txt`).
 5.  Once discovery is complete, `testssl.sh` is executed against the queue, saving HTML reports.
